@@ -1,11 +1,12 @@
-
 // --- CONFIG ---
 const APP_PREFIX = 'stranger_';
+const CONTACTS_KEY = 'stranger_contacts';
 
 // --- STATE ---
 let myPhone = '';
 let peer = null;
 let conn = null; // Current active connection
+let contacts = [];
 
 // --- DOM ELEMENTS ---
 const screens = {
@@ -14,17 +15,19 @@ const screens = {
 };
 const inputs = {
     myPhone: document.getElementById('my-phone'),
-    remotePhone: document.getElementById('remote-phone'),
-    msg: document.getElementById('msg-input')
+    msg: document.getElementById('msg-input'),
+    contactName: document.getElementById('new-contact-name'),
+    contactPhone: document.getElementById('new-contact-phone')
 };
 const btns = {
     login: document.getElementById('btn-login'),
-    connect: document.getElementById('btn-connect'),
+    addContact: document.getElementById('btn-add-contact'),
     send: document.getElementById('btn-send'),
     disconnect: document.getElementById('btn-disconnect')
 };
 const ui = {
     displayPhone: document.getElementById('display-phone'),
+    contactsList: document.getElementById('contacts-list'),
     chatHeader: document.getElementById('chat-header'),
     chatPartner: document.getElementById('chat-partner-id'),
     messages: document.getElementById('messages-container'),
@@ -33,7 +36,7 @@ const ui = {
 
 // --- EVENTS ---
 btns.login.addEventListener('click', handleLogin);
-btns.connect.addEventListener('click', handleManualConnect);
+btns.addContact.addEventListener('click', handleAddContact);
 btns.send.addEventListener('click', sendMessage);
 btns.disconnect.addEventListener('click', closeConnection);
 inputs.msg.addEventListener('keypress', (e) => {
@@ -48,72 +51,106 @@ function handleLogin() {
     if (phone.length < 3) return showToast('Invalid Phone Number', 'error');
 
     myPhone = phone;
+    loadContacts(); // Load saved contacts
     startPeerSession(myPhone);
 }
 
 function startPeerSession(id) {
     ui.displayPhone.textContent = "Connecting...";
 
-    // Initialize PeerJS (Connect to free cloud)
-    // IMPORTANT: IDs must be strings.
-    // Using a sanitized phone number as the ID allows for easy manual connection.
-    peer = new Peer(APP_PREFIX + id, {
-        debug: 2
-    });
+    peer = new Peer(APP_PREFIX + id, { debug: 1 });
 
     peer.on('open', (peerId) => {
-        // Success
         console.log('My PeerJS ID is: ' + peerId);
-        ui.displayPhone.textContent = id; // Show simple phone, hide prefix
+        ui.displayPhone.textContent = id;
         switchScreen('dashboard');
     });
 
     peer.on('connection', (connection) => {
-        // Incoming connection!
         handleConnection(connection);
     });
 
     peer.on('error', (err) => {
         console.error(err);
         if (err.type === 'unavailable-id') {
-            showToast('Number already online! Close other tabs.', 'error');
+            showToast('Number already online!', 'error');
             ui.displayPhone.textContent = "Error";
-            // Wait and try again? Or just stop.
         } else {
             showToast('Connection Error: ' + err.type, 'error');
         }
     });
 }
 
-function handleManualConnect() {
-    const targetPhone = inputs.remotePhone.value.trim().replace(/[^a-zA-Z0-9]/g, '');
-    if (!targetPhone) return;
-    if (targetPhone === myPhone) return showToast("You can't call yourself!", 'error');
+// --- CONTACTS SYSTEM ---
 
+function loadContacts() {
+    const stored = localStorage.getItem(CONTACTS_KEY);
+    if (stored) {
+        contacts = JSON.parse(stored);
+        renderContacts();
+    }
+}
+
+function handleAddContact() {
+    const name = inputs.contactName.value.trim();
+    const phone = inputs.contactPhone.value.trim().replace(/[^a-zA-Z0-9]/g, '');
+
+    if (!name || !phone) return showToast('Enter Name and Phone', 'error');
+    if (phone === myPhone) return showToast("Can't add yourself!", 'error');
+
+    // Add to list
+    contacts.push({ name, phone });
+    localStorage.setItem(CONTACTS_KEY, JSON.stringify(contacts));
+
+    // Clear inputs
+    inputs.contactName.value = '';
+    inputs.contactPhone.value = '';
+
+    renderContacts();
+    showToast(`Added ${name}`);
+}
+
+function renderContacts() {
+    ui.contactsList.innerHTML = '';
+    contacts.forEach(c => {
+        const li = document.createElement('li');
+        li.className = 'contact-item';
+        li.innerHTML = `
+            <div class="contact-info">
+                <span class="contact-name">${c.name}</span>
+                <span class="contact-phone">#${c.phone}</span>
+            </div>
+            <button class="icon-btn" style="width:30px; height:30px; font-size:0.8rem">📞</button>
+        `;
+        li.onclick = () => connectToPeer(c.phone);
+        ui.contactsList.appendChild(li);
+    });
+}
+
+function connectToPeer(targetPhone) {
+    if (!targetPhone) return;
     showToast(`Calling ${targetPhone}...`);
 
     const connection = peer.connect(APP_PREFIX + targetPhone);
-
-    // PeerJS connection setup is async, but the object is returned immediately
     handleConnection(connection);
 }
 
+// --- CHAT LOGIC ---
+
 function handleConnection(connection) {
-    // If we already have a chat, maybe close it?
     if (conn && conn.open) {
-        connection.close(); // Busy
+        connection.close();
         return;
     }
 
     conn = connection;
 
     conn.on('open', () => {
-        setupChatUI(conn.peer.replace(APP_PREFIX, '')); // Strip prefix for display
+        setupChatUI(conn.peer.replace(APP_PREFIX, ''));
         showToast('Connected!');
     });
 
     conn.on('data', (data) => {
-        // Assume data is object { type: 'msg', content: '...' }
         if (data.type === 'msg') {
             addMessage('received', data.content);
         }
@@ -131,10 +168,7 @@ function sendMessage() {
     const text = inputs.msg.value.trim();
     if (!text || !conn || !conn.open) return;
 
-    // Send
     conn.send({ type: 'msg', content: text });
-
-    // Local Echo
     addMessage('sent', text);
     inputs.msg.value = '';
 }
@@ -156,8 +190,6 @@ function setupChatUI(partnerName) {
     ui.chatHeader.classList.remove('hidden');
     ui.inputArea.classList.remove('disabled');
     ui.messages.innerHTML = '';
-
-    // Focus input
     setTimeout(() => inputs.msg.focus(), 100);
 }
 
@@ -185,4 +217,3 @@ function showToast(msg, type = 'info') {
     area.appendChild(toast);
     setTimeout(() => toast.remove(), 3000);
 }
-

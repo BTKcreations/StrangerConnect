@@ -19,7 +19,7 @@
 
 body {
     background-color: var(--bg-color);
-    background-image: 
+    background-image:
         radial-gradient(at 0% 0%, rgba(139, 92, 246, 0.15) 0px, transparent 50%),
         radial-gradient(at 100% 100%, rgba(16, 185, 129, 0.15) 0px, transparent 50%);
     color: var(--text-main);
@@ -68,8 +68,15 @@ body {
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .glass-panel h1 {
@@ -118,7 +125,9 @@ button {
     font-size: 1rem;
 }
 
-.primary-btn:hover { background: var(--primary-hover); }
+.primary-btn:hover {
+    background: var(--primary-hover);
+}
 
 /* DASHBOARD */
 header {
@@ -175,15 +184,64 @@ header {
     color: var(--text-muted);
 }
 
-#local-users-list {
+/* CONTACTS */
+.add-contact-form {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.add-contact-form input {
     width: 100%;
-    background: rgba(0, 0, 0, 0.2);
-    border: 1px solid var(--glass-border);
-    color: white;
-    border-radius: 8px;
     padding: 0.5rem;
-    height: 150px;
-    margin-bottom: 0.5rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+}
+
+.small-btn {
+    padding: 0.5rem 0.8rem;
+    font-size: 1.2rem;
+    line-height: 1;
+}
+
+.contacts-list {
+    list-style: none;
+    overflow-y: auto;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.contact-item {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 0.8rem;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: 0.2s;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.contact-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateX(2px);
+}
+
+.contact-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.contact-name {
+    font-weight: 600;
+    color: var(--text-main);
+}
+
+.contact-phone {
+    font-size: 0.8rem;
+    color: var(--text-muted);
 }
 
 .secondary-btn {
@@ -193,7 +251,10 @@ header {
     padding: 0.8rem;
     border-radius: 8px;
 }
-.secondary-btn:hover { background: rgba(139, 92, 246, 0.1); }
+
+.secondary-btn:hover {
+    background: rgba(139, 92, 246, 0.1);
+}
 
 .chat-area {
     flex: 1;
@@ -212,7 +273,7 @@ header {
 }
 
 .chat-header.hidden {
-    visibility: hidden; 
+    visibility: hidden;
 }
 
 .danger-btn {
@@ -222,7 +283,10 @@ header {
     border-radius: 8px;
     font-size: 0.8rem;
 }
-.danger-btn:hover { background: rgba(239, 68, 68, 0.3); }
+
+.danger-btn:hover {
+    background: rgba(239, 68, 68, 0.3);
+}
 
 .messages-container {
     flex: 1;
@@ -250,8 +314,15 @@ header {
 }
 
 @keyframes popIn {
-    from { opacity: 0; transform: scale(0.9); }
-    to { opacity: 1; transform: scale(1); }
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
 }
 
 .message.sent {
@@ -302,11 +373,18 @@ header {
     color: white;
     padding: 1rem 1.5rem;
     border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
     animation: slideLeft 0.3s ease-out;
 }
 
 @keyframes slideLeft {
-    from { transform: translateX(100%); opacity: 0; }
-    to { transform: translateX(0); opacity: 1; }
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
 }

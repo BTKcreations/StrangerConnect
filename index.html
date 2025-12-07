@@ -39,14 +39,16 @@
                 <!-- SIDEBAR -->
                 <aside class="sidebar">
                     <div class="section">
-                        <h3>Connect to Friend</h3>
-                        <div class="input-group small">
-                            <input type="tel" id="remote-phone" placeholder="Friend's Number">
-                            <button id="btn-connect" class="secondary-btn">Connect</button>
+                        <h3>My Contacts</h3>
+                        <div class="add-contact-form">
+                            <input type="text" id="new-contact-name" placeholder="Name">
+                            <input type="tel" id="new-contact-phone" placeholder="Phone">
+                            <button id="btn-add-contact" class="secondary-btn small-btn">+</button>
                         </div>
+                        <ul id="contacts-list" class="contacts-list">
+                            <!-- Contacts will appear here -->
+                        </ul>
                     </div>
-
-
                 </aside>
 
                 <!-- CHAT AREA -->
