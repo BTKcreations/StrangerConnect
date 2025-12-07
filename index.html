@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StrangerConnect</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+    <div class="app-container">
+        <!-- LOGIN SCREEN -->
+        <div id="login-screen" class="screen active">
+            <div class="glass-panel">
+                <h1>StrangerConnect</h1>
+                <p>Secure P2P Chat</p>
+                <div class="input-group">
+                    <input type="tel" id="my-phone" placeholder="Enter your Phone Number" autocomplete="off">
+                    <button id="btn-login" class="primary-btn">Go Online</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- MAIN DASHBOARD -->
+        <div id="dashboard-screen" class="screen">
+            <header>
+                <div class="logo">StrangerConnect</div>
+                <div class="user-status">
+                    <span class="status-dot"></span>
+                    <span id="display-phone">Simulating...</span>
+                </div>
+            </header>
+
+            <div class="main-content">
+                <!-- SIDEBAR -->
+                <aside class="sidebar">
+                    <div class="section">
+                        <h3>Connect to Friend</h3>
+                        <div class="input-group small">
+                            <input type="tel" id="remote-phone" placeholder="Friend's Number">
+                            <button id="btn-connect" class="secondary-btn">Connect</button>
+                        </div>
+                    </div>
+
+
+                </aside>
+
+                <!-- CHAT AREA -->
+                <main class="chat-area">
+                    <div id="chat-header" class="chat-header hidden">
+                        <span>Connected to: <b id="chat-partner-id">...</b></span>
+                        <button id="btn-disconnect" class="danger-btn">End</button>
+                    </div>
+
+                    <div id="messages-container" class="messages-container">
+                        <div class="placeholder-text">Ready to connect.</div>
+                    </div>
+
+                    <div class="chat-input-area disabled" id="chat-input-area">
+                        <input type="text" id="msg-input" placeholder="Type a message...">
+                        <button id="btn-send" class="icon-btn">➤</button>
+                    </div>
+                </main>
+            </div>
+        </div>
+    </div>
+
+    <div id="notification-area"></div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
