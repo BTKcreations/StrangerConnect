@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>StrangerConnect</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
     <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
 </head>
@@ -17,7 +18,11 @@
         <div id="login-screen" class="screen active">
             <div class="glass-panel">
                 <h1>StrangerConnect</h1>
-                <p>Secure P2P Chat</p>
+                <div class="subtitle-group">
+                    <p>Secure P2P Chat</p>
+                    <button id="btn-install" class="secondary-btn small-btn hidden" style="margin: 0.5rem auto;">⬇
+                        Install App</button>
+                </div>
                 <div class="input-group">
                     <input type="tel" id="my-phone" placeholder="Enter your Phone Number" autocomplete="off">
                     <button id="btn-login" class="primary-btn">Go Online</button>

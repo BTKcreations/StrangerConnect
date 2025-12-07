@@ -7,6 +7,7 @@ let myPhone = '';
 let peer = null;
 let conn = null; // Current active connection
 let contacts = [];
+let deferredPrompt; // For PWA install
 
 // --- DOM ELEMENTS ---
 const screens = {
@@ -23,7 +24,8 @@ const btns = {
     login: document.getElementById('btn-login'),
     addContact: document.getElementById('btn-add-contact'),
     send: document.getElementById('btn-send'),
-    disconnect: document.getElementById('btn-disconnect')
+    disconnect: document.getElementById('btn-disconnect'),
+    install: document.getElementById('btn-install')
 };
 const ui = {
     displayPhone: document.getElementById('display-phone'),
@@ -33,6 +35,32 @@ const ui = {
     messages: document.getElementById('messages-container'),
     inputArea: document.getElementById('chat-input-area')
 };
+
+// --- PWA INIT ---
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').then(
+            (reg) => console.log('SW Registered'),
+            (err) => console.log('SW Failed', err)
+        );
+    });
+}
+
+window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    btns.install.classList.remove('hidden');
+});
+
+btns.install.addEventListener('click', async () => {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    console.log(`User response to install prompt: ${outcome}`);
+    deferredPrompt = null;
+    btns.install.classList.add('hidden');
+});
+
 
 // --- EVENTS ---
 btns.login.addEventListener('click', handleLogin);
